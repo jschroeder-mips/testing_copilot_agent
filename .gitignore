@@ -61,6 +61,14 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# MCP Server files
+mcp_api_keys.json
+
 # Flask stuff:
 instance/
 .webassets-cache
