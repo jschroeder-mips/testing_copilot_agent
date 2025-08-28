@@ -1,11 +1,16 @@
 """User model for authentication and user management."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
+
+
+def utc_now():
+    """Return current UTC datetime for database defaults."""
+    return datetime.now(timezone.utc)
 
 
 class User(UserMixin, db.Model):
@@ -27,7 +32,7 @@ class User(UserMixin, db.Model):
     username: str = db.Column(db.String(80), unique=True, nullable=False, index=True)
     email: str = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash: str = db.Column(db.String(256), nullable=False)
-    created_at: datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at: datetime = db.Column(db.DateTime, default=utc_now)
     
     # Relationship to TODO items
     todos = db.relationship('Todo', backref='user', lazy='dynamic', cascade='all, delete-orphan')

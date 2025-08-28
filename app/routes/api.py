@@ -1,6 +1,6 @@
 """RESTful API routes with Swagger documentation."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify
 from flask_restx import Api, Resource, fields, Namespace
 from flask_login import login_required, current_user
@@ -151,7 +151,7 @@ class TodoResource(Resource):
             except ValueError:
                 api.abort(400, 'Invalid due_date format. Use ISO format.')
         
-        todo.updated_at = datetime.utcnow()
+        todo.updated_at = datetime.now(timezone.utc)
         db.session.commit()
         
         return todo.to_dict()

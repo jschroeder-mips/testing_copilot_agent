@@ -1,9 +1,14 @@
 """Todo model for task management."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 from app import db
+
+
+def utc_now():
+    """Return current UTC datetime for database defaults."""
+    return datetime.now(timezone.utc)
 
 
 class TodoStatus(Enum):
@@ -52,11 +57,11 @@ class Todo(db.Model):
         default=TodoPriority.MEDIUM, 
         nullable=False
     )
-    created_at: datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at: datetime = db.Column(db.DateTime, default=utc_now)
     updated_at: datetime = db.Column(
         db.DateTime, 
-        default=datetime.utcnow, 
-        onupdate=datetime.utcnow
+        default=utc_now, 
+        onupdate=utc_now
     )
     due_date: Optional[datetime] = db.Column(db.DateTime)
     
@@ -66,17 +71,17 @@ class Todo(db.Model):
     def mark_completed(self) -> None:
         """Mark the TODO item as completed."""
         self.status = TodoStatus.COMPLETED
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_in_progress(self) -> None:
         """Mark the TODO item as in progress."""
         self.status = TodoStatus.IN_PROGRESS
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
     
     def mark_pending(self) -> None:
         """Mark the TODO item as pending."""
         self.status = TodoStatus.PENDING
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
     
     @property
     def is_overdue(self) -> bool:
@@ -87,7 +92,7 @@ class Todo(db.Model):
             True if due date has passed and item is not completed
         """
         if self.due_date and self.status != TodoStatus.COMPLETED:
-            return datetime.utcnow() > self.due_date
+            return datetime.now(timezone.utc) > self.due_date
         return False
     
     def to_dict(self) -> dict:
