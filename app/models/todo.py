@@ -92,7 +92,12 @@ class Todo(db.Model):
             True if due date has passed and item is not completed
         """
         if self.due_date and self.status != TodoStatus.COMPLETED:
-            return datetime.now(timezone.utc) > self.due_date
+            # Ensure both datetimes are timezone-aware for comparison
+            due_date_aware = self.due_date
+            if due_date_aware.tzinfo is None:
+                # Treat offset-naive due_date as UTC
+                due_date_aware = due_date_aware.replace(tzinfo=timezone.utc)
+            return datetime.now(timezone.utc) > due_date_aware
         return False
     
     def to_dict(self) -> dict:
