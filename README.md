@@ -172,21 +172,360 @@ flask shell
 
 ## Docker Deployment
 
-The application is designed to be Docker-ready and uses uv for fast, reliable dependency management:
+CyberTODO 2077 is fully containerized and ready for deployment with Docker. This comprehensive guide covers everything from basic Docker usage to production deployment.
 
-```dockerfile
-FROM python:3.11-slim
+### Prerequisites
 
-WORKDIR /app
-RUN pip install uv
-COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev
+- **Docker**: Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine
+- **Docker Compose**: Included with Docker Desktop, or install separately
+- **Git**: To clone the repository
 
-COPY . .
-RUN uv run python run.py init-db
+### Quick Start with Docker
 
-EXPOSE 5000
-CMD ["uv", "run", "python", "run.py"]
+#### Option 1: Using Docker Compose (Recommended)
+
+The easiest way to run CyberTODO 2077 is with Docker Compose:
+
+```bash
+# Clone the repository
+git clone https://github.com/jschroeder-mips/testing_copilot_agent.git
+cd testing_copilot_agent
+
+# Start the application
+docker compose up --build
+
+# Or run in detached mode
+docker compose up --build -d
+```
+
+The application will be available at `http://localhost:5000`
+
+To stop the application:
+```bash
+docker compose down
+```
+
+#### Option 2: Using Docker Directly
+
+Build and run the container manually:
+
+```bash
+# Build the Docker image
+docker build -t cybertodo .
+
+# Run the container
+docker run -p 5000:5000 cybertodo
+
+# Or run in detached mode with a name
+docker run -d --name cybertodo -p 5000:5000 cybertodo
+```
+
+### Environment Configuration
+
+Configure the application using environment variables:
+
+#### Development Setup
+```bash
+docker run -p 5000:5000 \
+  -e FLASK_CONFIG=development \
+  -e SECRET_KEY=your-development-secret-key \
+  cybertodo
+```
+
+#### Production Setup
+```bash
+docker run -p 5000:5000 \
+  -e FLASK_CONFIG=production \
+  -e SECRET_KEY=your-strong-production-secret-key \
+  -e DATABASE_URL=sqlite:///app/instance/cybertodo.db \
+  cybertodo
+```
+
+### Data Persistence
+
+#### Using Docker Volumes
+
+To persist your data between container restarts:
+
+```bash
+# Create a named volume
+docker volume create cybertodo_data
+
+# Run with volume mounted
+docker run -p 5000:5000 \
+  -v cybertodo_data:/app/instance \
+  cybertodo
+```
+
+#### Using Bind Mounts
+
+Mount a local directory for data persistence:
+
+```bash
+# Create local data directory
+mkdir -p ./data
+
+# Run with bind mount
+docker run -p 5000:5000 \
+  -v $(pwd)/data:/app/instance \
+  cybertodo
+```
+
+### Docker Compose Configuration
+
+#### Basic Setup (SQLite)
+
+The default `docker-compose.yml` uses SQLite and includes volume mounting:
+
+```yaml
+version: '3.8'
+
+services:
+  cybertodo:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_CONFIG=production
+      - SECRET_KEY=your-secret-key-here-change-in-production
+    volumes:
+      - ./instance:/app/instance
+    restart: unless-stopped
+```
+
+**Important**: Before running `docker compose up`, create the instance directory:
+```bash
+mkdir -p instance
+```
+
+If you encounter permission issues, you can also run without volume mounting (data won't persist):
+```bash
+# Remove the volumes section from docker-compose.yml temporarily
+docker compose up --build
+```
+
+#### Advanced Setup with PostgreSQL
+
+For production deployment with PostgreSQL, create a `docker-compose.prod.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  cybertodo:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_CONFIG=production
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=postgresql://cybertodo:${DB_PASSWORD}@postgres:5432/cybertodo
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cybertodo
+      POSTGRES_USER: cybertodo
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+Run with:
+```bash
+# Create environment file
+echo "SECRET_KEY=your-super-secret-key" > .env
+echo "DB_PASSWORD=your-db-password" >> .env
+
+# Start with PostgreSQL
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
+### Docker Build Process
+
+The Dockerfile uses a multi-stage approach for efficiency and security:
+
+1. **Base Image**: Python 3.11 slim for minimal size
+2. **Dependencies**: Installs system packages (gcc, curl) and Python dependencies
+3. **Security**: Runs as non-root user `cybertodo`
+4. **Health Check**: Monitors application health
+5. **Fallback**: Uses pip if uv installation fails
+
+Key features:
+- **Fast Builds**: Uses uv for rapid dependency installation
+- **Security**: Non-root user execution
+- **Health Monitoring**: Built-in health checks
+- **Flexibility**: Fallback to pip if uv fails
+
+### Port Configuration
+
+- **Default Port**: 5000 (Flask development server)
+- **Container Port**: 5000 (exposed by Dockerfile)
+- **Host Mapping**: Configurable (e.g., `-p 8080:5000` for port 8080)
+
+Example custom port mapping:
+```bash
+docker run -p 8080:5000 cybertodo
+# Access at http://localhost:8080
+```
+
+### Development with Docker
+
+#### Live Development with Volume Mounting
+
+For development with auto-reload:
+
+```bash
+docker run -p 5000:5000 \
+  -v $(pwd):/app \
+  -e FLASK_CONFIG=development \
+  cybertodo
+```
+
+#### Development Docker Compose
+
+Create `docker-compose.dev.yml` for development:
+
+```yaml
+version: '3.8'
+
+services:
+  cybertodo:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_CONFIG=development
+      - SECRET_KEY=dev-secret-key
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    restart: unless-stopped
+```
+
+### Troubleshooting
+
+#### Common Issues
+
+**Port Already in Use**
+```bash
+# Find process using port 5000
+lsof -i :5000
+
+# Use different port
+docker run -p 5001:5000 cybertodo
+```
+
+**Permission Denied**
+```bash
+# Fix file permissions
+sudo chown -R $USER:$USER ./instance
+```
+
+**Container Won't Start**
+```bash
+# Check logs
+docker logs cybertodo
+
+# Check with docker compose
+docker compose logs cybertodo
+```
+
+**Database Issues**
+```bash
+# If you get "unable to open database file" error:
+# 1. Ensure instance directory exists
+mkdir -p instance
+
+# 2. Check permissions (may require sudo)
+ls -la instance/
+
+# 3. Reset database inside container
+docker exec -it cybertodo flask init-db
+
+# 4. Or run without persistent volumes initially
+docker run -p 5000:5000 cybertodo
+
+# With docker compose
+docker compose exec cybertodo flask init-db
+```
+
+#### Health Check
+
+The container includes a health check endpoint:
+```bash
+# Check container health
+docker ps  # Shows health status
+
+# Manual health check
+curl http://localhost:5000/
+```
+
+### Best Practices
+
+#### Security
+- Use strong, unique `SECRET_KEY` in production
+- Don't expose unnecessary ports
+- Use specific image tags instead of `latest`
+- Regularly update base images for security patches
+
+#### Performance
+- Use multi-stage builds for smaller images
+- Leverage Docker layer caching
+- Use `.dockerignore` to exclude unnecessary files
+
+#### Production Deployment
+- Use PostgreSQL for production databases
+- Implement proper logging and monitoring
+- Use reverse proxy (nginx) for HTTPS termination
+- Configure resource limits
+
+#### Monitoring
+```bash
+# Monitor resource usage
+docker stats cybertodo
+
+# View logs in real-time
+docker logs -f cybertodo
+```
+
+### Environment Variables Reference
+
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `FLASK_CONFIG` | Configuration mode | `development` | `production` |
+| `SECRET_KEY` | Flask secret key | Random | `your-secret-key` |
+| `DATABASE_URL` | Database connection | SQLite | `postgresql://user:pass@host:5432/db` |
+
+### Container Management
+
+#### Useful Commands
+
+```bash
+# List running containers
+docker ps
+
+# Stop container
+docker stop cybertodo
+
+# Remove container
+docker rm cybertodo
+
+# View logs
+docker logs cybertodo
+
+# Execute commands in container
+docker exec -it cybertodo /bin/bash
+
+# Rebuild and restart with compose
+docker compose up --build --force-recreate
 ```
 
 ## Security Features
