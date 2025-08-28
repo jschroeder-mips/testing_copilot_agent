@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Cyberpunk TODO 2077{% endblock %}
+
+{% block main_class %}hero is-fullheight-with-navbar{% endblock %}
+
+{% block content %}
+<div class="hero-body">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+                <div class="box cyberpunk-box">
+                    <div class="has-text-centered mb-5">
+                        <i class="fas fa-brain cyberpunk-brain-icon"></i>
+                        <h1 class="title has-text-light cyberpunk-title">NEURAL REGISTRATION</h1>
+                        <p class="subtitle has-text-grey-light">Initialize new consciousness</p>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-user"></i>&nbsp;{{ form.username.label.text }}
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.username() }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                            {% if form.username.errors %}
+                                <p class="help is-danger">
+                                    {% for error in form.username.errors %}
+                                        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-envelope"></i>&nbsp;{{ form.email.label.text }}
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.email() }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                            </div>
+                            {% if form.email.errors %}
+                                <p class="help is-danger">
+                                    {% for error in form.email.errors %}
+                                        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-lock"></i>&nbsp;{{ form.password.label.text }}
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.password() }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                            {% if form.password.errors %}
+                                <p class="help is-danger">
+                                    {% for error in form.password.errors %}
+                                        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-shield-alt"></i>&nbsp;{{ form.password2.label.text }}
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.password2() }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-shield-alt"></i>
+                                </span>
+                            </div>
+                            {% if form.password2.errors %}
+                                <p class="help is-danger">
+                                    {% for error in form.password2.errors %}
+                                        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <div class="control">
+                                {{ form.submit(class="button is-primary is-fullwidth cyberpunk-button") }}
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <hr class="cyberpunk-divider">
+                    
+                    <div class="has-text-centered">
+                        <p class="has-text-grey-light">
+                            <i class="fas fa-question-circle"></i>
+                            Already have neural access?
+                        </p>
+                        <a href="{{ url_for('auth.login') }}" class="button is-text cyberpunk-link">
+                            <i class="fas fa-sign-in-alt"></i>&nbsp;Connect to Mainframe
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Add cyberpunk glitch effect to the title
+    const title = document.querySelector('.cyberpunk-title');
+    if (title) {
+        setInterval(() => {
+            title.style.textShadow = `
+                ${Math.random() * 2}px ${Math.random() * 2}px 0px #ff0040,
+                ${Math.random() * 2}px ${Math.random() * 2}px 0px #00ffff
+            `;
+            setTimeout(() => {
+                title.style.textShadow = '2px 2px 0px #ff0040, -2px -2px 0px #00ffff';
+            }, 100);
+        }, 4000);
+    }
+    
+    // Focus on username field
+    const usernameField = document.querySelector('input[name="username"]');
+    if (usernameField) {
+        usernameField.focus();
+    }
+    
+    // Password strength indicator
+    const passwordField = document.querySelector('input[name="password"]');
+    if (passwordField) {
+        passwordField.addEventListener('input', function() {
+            const strength = calculatePasswordStrength(this.value);
+            // You can add visual feedback here
+        });
+    }
+});
+
+function calculatePasswordStrength(password) {
+    let strength = 0;
+    if (password.length >= 6) strength += 1;
+    if (password.match(/[a-z]/)) strength += 1;
+    if (password.match(/[A-Z]/)) strength += 1;
+    if (password.match(/[0-9]/)) strength += 1;
+    if (password.match(/[^a-zA-Z0-9]/)) strength += 1;
+    return strength;
+}
+</script>
+{% endblock %}

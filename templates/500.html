@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Internal Server Error{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="columns is-centered">
+        <div class="column is-6">
+            <div class="box cyberpunk-box has-text-centered">
+                <i class="fas fa-bug fa-5x has-text-danger mb-4"></i>
+                <h1 class="title has-text-light cyberpunk-title">500</h1>
+                <h2 class="subtitle has-text-grey-light">System malfunction detected</h2>
+                <p class="has-text-grey-light mb-4">
+                    A critical error has occurred in the neural network. 
+                    Our cyber-techs have been notified and are working to resolve the issue.
+                </p>
+                <a href="{{ url_for('index') }}" class="button is-primary cyberpunk-button">
+                    <i class="fas fa-refresh"></i>&nbsp;Restart System
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

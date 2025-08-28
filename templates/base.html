@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cyberpunk TODO 2077{% endblock %}</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Cyberpunk CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔮</text></svg>">
+</head>
+<body class="has-background-dark has-text-light">
+    <!-- Navigation -->
+    <nav class="navbar is-dark cyberpunk-nav" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item cyberpunk-logo" href="{{ url_for('index') if current_user.is_authenticated else url_for('auth.login') }}">
+                <i class="fas fa-microchip cyberpunk-icon"></i>
+                <span class="cyberpunk-title">CYBERPUNK TODO 2077</span>
+            </a>
+            
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        
+        <div id="navbarMenu" class="navbar-menu">
+            <div class="navbar-start">
+                {% if current_user.is_authenticated %}
+                <a class="navbar-item" href="{{ url_for('index') }}">
+                    <i class="fas fa-home"></i>&nbsp;Dashboard
+                </a>
+                <a class="navbar-item" href="/api/docs/">
+                    <i class="fas fa-code"></i>&nbsp;API Docs
+                </a>
+                {% endif %}
+            </div>
+            
+            <div class="navbar-end">
+                {% if current_user.is_authenticated %}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link cyberpunk-user">
+                        <i class="fas fa-user-ninja"></i>&nbsp;{{ current_user.username }}
+                    </a>
+                    <div class="navbar-dropdown is-right is-dark">
+                        <a class="navbar-item" href="{{ url_for('auth.logout') }}">
+                            <i class="fas fa-sign-out-alt"></i>&nbsp;Logout
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-primary" href="{{ url_for('auth.register') }}">
+                            <strong>Register</strong>
+                        </a>
+                        <a class="button is-light" href="{{ url_for('auth.login') }}">
+                            Login
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-4">
+                {% for category, message in messages %}
+                    <div class="notification {% if category == 'error' %}is-danger{% elif category == 'success' %}is-success{% elif category == 'info' %}is-info{% else %}is-warning{% endif %} cyberpunk-notification">
+                        <button class="delete"></button>
+                        <i class="fas {% if category == 'error' %}fa-exclamation-triangle{% elif category == 'success' %}fa-check-circle{% elif category == 'info' %}fa-info-circle{% else %}fa-bell{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Main Content -->
+    <main class="{% block main_class %}section{% endblock %}">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer has-background-dark has-text-light cyberpunk-footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong class="has-text-light">Cyberpunk TODO 2077</strong> - 
+                The future of task management is here.
+                <br>
+                <small>
+                    <i class="fas fa-code"></i> Built with Flask, SQLAlchemy & Bulma CSS |
+                    <a href="/api/docs/" class="has-text-primary">
+                        <i class="fas fa-book"></i> API Documentation
+                    </a>
+                </small>
+            </p>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    <script>
+        // Navbar burger toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+            
+            if ($navbarBurgers.length > 0) {
+                $navbarBurgers.forEach(el => {
+                    el.addEventListener('click', () => {
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+                    });
+                });
+            }
+            
+            // Auto-dismiss notifications
+            document.querySelectorAll('.notification .delete').forEach(($delete) => {
+                const $notification = $delete.parentNode;
+                $delete.addEventListener('click', () => {
+                    $notification.parentNode.removeChild($notification);
+                });
+            });
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                document.querySelectorAll('.notification').forEach(($notification) => {
+                    $notification.style.opacity = '0';
+                    setTimeout(() => {
+                        if ($notification.parentNode) {
+                            $notification.parentNode.removeChild($notification);
+                        }
+                    }, 300);
+                });
+            }, 5000);
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

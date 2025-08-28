@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Cyberpunk TODO 2077{% endblock %}
+
+{% block main_class %}hero is-fullheight-with-navbar{% endblock %}
+
+{% block content %}
+<div class="hero-body">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+                <div class="box cyberpunk-box">
+                    <div class="has-text-centered mb-5">
+                        <i class="fas fa-skull cyberpunk-skull-icon"></i>
+                        <h1 class="title has-text-light cyberpunk-title">NEURAL LINK</h1>
+                        <p class="subtitle has-text-grey-light">Connect to the mainframe</p>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-user"></i>&nbsp;{{ form.username.label.text }}
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.username() }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                            {% if form.username.errors %}
+                                <p class="help is-danger">
+                                    {% for error in form.username.errors %}
+                                        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-lock"></i>&nbsp;{{ form.password.label.text }}
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.password() }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                            {% if form.password.errors %}
+                                <p class="help is-danger">
+                                    {% for error in form.password.errors %}
+                                        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <div class="control">
+                                {{ form.submit(class="button is-primary is-fullwidth cyberpunk-button") }}
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <hr class="cyberpunk-divider">
+                    
+                    <div class="has-text-centered">
+                        <p class="has-text-grey-light">
+                            <i class="fas fa-question-circle"></i>
+                            New to the system?
+                        </p>
+                        <a href="{{ url_for('auth.register') }}" class="button is-text cyberpunk-link">
+                            <i class="fas fa-user-plus"></i>&nbsp;Create Neural Profile
+                        </a>
+                    </div>
+                    
+                    <!-- Demo credentials info -->
+                    <div class="notification is-info is-light mt-4">
+                        <p class="has-text-dark">
+                            <strong><i class="fas fa-info-circle"></i> Demo Access:</strong><br>
+                            Username: <code>admin</code><br>
+                            Password: <code>admin123</code>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Add cyberpunk glitch effect to the title
+    const title = document.querySelector('.cyberpunk-title');
+    if (title) {
+        setInterval(() => {
+            title.style.textShadow = `
+                ${Math.random() * 2}px ${Math.random() * 2}px 0px #ff0040,
+                ${Math.random() * 2}px ${Math.random() * 2}px 0px #00ffff
+            `;
+            setTimeout(() => {
+                title.style.textShadow = '2px 2px 0px #ff0040, -2px -2px 0px #00ffff';
+            }, 100);
+        }, 3000);
+    }
+    
+    // Focus on username field
+    const usernameField = document.querySelector('input[name="username"]');
+    if (usernameField) {
+        usernameField.focus();
+    }
+});
+</script>
+{% endblock %}

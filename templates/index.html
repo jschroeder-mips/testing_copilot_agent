@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Cyberpunk TODO 2077{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header Stats -->
+    <div class="columns is-multiline mb-5">
+        <div class="column is-12">
+            <h1 class="title has-text-light cyberpunk-title">
+                <i class="fas fa-tachometer-alt"></i>&nbsp;NEURAL DASHBOARD
+            </h1>
+            <p class="subtitle has-text-grey-light">
+                Welcome back, <strong class="has-text-primary">{{ current_user.username }}</strong>. 
+                Your TODO matrix awaits.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="columns is-multiline mb-5">
+        <div class="column is-3">
+            <div class="box cyberpunk-stat-box">
+                <div class="level">
+                    <div class="level-left">
+                        <div>
+                            <p class="heading has-text-grey-light">Total Tasks</p>
+                            <p class="title has-text-light">{{ stats.total }}</p>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <i class="fas fa-tasks cyberpunk-stat-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="column is-3">
+            <div class="box cyberpunk-stat-box">
+                <div class="level">
+                    <div class="level-left">
+                        <div>
+                            <p class="heading has-text-grey-light">Pending</p>
+                            <p class="title has-text-warning">{{ stats.pending }}</p>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <i class="fas fa-clock cyberpunk-stat-icon has-text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="column is-3">
+            <div class="box cyberpunk-stat-box">
+                <div class="level">
+                    <div class="level-left">
+                        <div>
+                            <p class="heading has-text-grey-light">Completed</p>
+                            <p class="title has-text-success">{{ stats.completed }}</p>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <i class="fas fa-check-circle cyberpunk-stat-icon has-text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="column is-3">
+            <div class="box cyberpunk-stat-box">
+                <div class="level">
+                    <div class="level-left">
+                        <div>
+                            <p class="heading has-text-grey-light">Progress</p>
+                            <p class="title has-text-info">{{ stats.completion_rate }}%</p>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <i class="fas fa-chart-line cyberpunk-stat-icon has-text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Bar -->
+    <div class="columns mb-5">
+        <div class="column">
+            <div class="box cyberpunk-box">
+                <h3 class="title is-5 has-text-light">
+                    <i class="fas fa-battery-three-quarters"></i>&nbsp;Neural Load
+                </h3>
+                <progress class="progress is-primary cyberpunk-progress" value="{{ stats.completion_rate }}" max="100">
+                    {{ stats.completion_rate }}%
+                </progress>
+                <p class="has-text-grey-light">System efficiency: {{ stats.completion_rate }}%</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add New Todo -->
+    <div class="columns mb-5">
+        <div class="column">
+            <div class="box cyberpunk-box">
+                <h3 class="title is-5 has-text-light">
+                    <i class="fas fa-plus-circle"></i>&nbsp;Initialize New Task
+                </h3>
+                
+                <form id="addTodoForm">
+                    <div class="columns">
+                        <div class="column is-6">
+                            <div class="field">
+                                <label class="label has-text-light">Task Title</label>
+                                <div class="control">
+                                    <input class="input is-dark" type="text" id="todoTitle" placeholder="Enter task description..." required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column is-3">
+                            <div class="field">
+                                <label class="label has-text-light">Priority Level</label>
+                                <div class="control">
+                                    <div class="select is-dark is-fullwidth">
+                                        <select id="todoPriority">
+                                            <option value="low">Low</option>
+                                            <option value="medium" selected>Medium</option>
+                                            <option value="high">High</option>
+                                            <option value="critical">Critical</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column is-3">
+                            <div class="field">
+                                <label class="label has-text-light">&nbsp;</label>
+                                <div class="control">
+                                    <button type="submit" class="button is-primary is-fullwidth cyberpunk-button">
+                                        <i class="fas fa-plus"></i>&nbsp;Add Task
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="field">
+                        <label class="label has-text-light">Description (Optional)</label>
+                        <div class="control">
+                            <textarea class="textarea is-dark" id="todoDescription" placeholder="Additional task details..." rows="2"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Todo Lists -->
+    <div class="columns is-multiline">
+        <!-- Pending Todos -->
+        <div class="column is-6">
+            <div class="box cyberpunk-box">
+                <h3 class="title is-5 has-text-light">
+                    <i class="fas fa-hourglass-half has-text-warning"></i>&nbsp;Active Processes
+                    <span class="tag is-warning cyberpunk-tag">{{ pending_todos|length }}</span>
+                </h3>
+                
+                <div id="pendingTodos" class="todo-list">
+                    {% for todo in pending_todos %}
+                    <div class="todo-item cyberpunk-todo-item" data-todo-id="{{ todo.id }}">
+                        <div class="level is-mobile">
+                            <div class="level-left">
+                                <div class="level-item">
+                                    <div>
+                                        <p class="todo-title">
+                                            <i class="fas fa-circle priority-{{ todo.priority }}"></i>
+                                            {{ todo.title }}
+                                        </p>
+                                        {% if todo.description %}
+                                        <p class="todo-description has-text-grey-light">{{ todo.description }}</p>
+                                        {% endif %}
+                                        <p class="todo-meta has-text-grey-lighter">
+                                            <small>
+                                                <i class="fas fa-clock"></i> {{ todo.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                                <span class="tag is-small is-{{ 'danger' if todo.priority == 'critical' else 'warning' if todo.priority == 'high' else 'info' if todo.priority == 'medium' else 'light' }}">
+                                                    {{ todo.priority.upper() }}
+                                                </span>
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                    <div class="buttons">
+                                        <button class="button is-success is-small cyberpunk-button-small" onclick="toggleTodo({{ todo.id }})">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="button is-info is-small cyberpunk-button-small" onclick="editTodo({{ todo.id }})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="button is-danger is-small cyberpunk-button-small" onclick="deleteTodo({{ todo.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if not pending_todos %}
+                    <div class="has-text-centered has-text-grey-light py-6">
+                        <i class="fas fa-robot fa-3x mb-3"></i>
+                        <p>No active processes. System idle.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completed Todos -->
+        <div class="column is-6">
+            <div class="box cyberpunk-box">
+                <h3 class="title is-5 has-text-light">
+                    <i class="fas fa-check-circle has-text-success"></i>&nbsp;Completed Tasks
+                    <span class="tag is-success cyberpunk-tag">{{ completed_todos|length }}</span>
+                </h3>
+                
+                <div id="completedTodos" class="todo-list">
+                    {% for todo in completed_todos %}
+                    <div class="todo-item cyberpunk-todo-item todo-completed" data-todo-id="{{ todo.id }}">
+                        <div class="level is-mobile">
+                            <div class="level-left">
+                                <div class="level-item">
+                                    <div>
+                                        <p class="todo-title">
+                                            <i class="fas fa-check-circle has-text-success"></i>
+                                            <del>{{ todo.title }}</del>
+                                        </p>
+                                        {% if todo.description %}
+                                        <p class="todo-description has-text-grey-light"><del>{{ todo.description }}</del></p>
+                                        {% endif %}
+                                        <p class="todo-meta has-text-grey-lighter">
+                                            <small>
+                                                <i class="fas fa-flag-checkered"></i> {{ todo.updated_at.strftime('%Y-%m-%d %H:%M') }}
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                    <div class="buttons">
+                                        <button class="button is-warning is-small cyberpunk-button-small" onclick="toggleTodo({{ todo.id }})">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                        <button class="button is-danger is-small cyberpunk-button-small" onclick="deleteTodo({{ todo.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if not completed_todos %}
+                    <div class="has-text-centered has-text-grey-light py-6">
+                        <i class="fas fa-battery-empty fa-3x mb-3"></i>
+                        <p>No completed tasks yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Todo Modal -->
+<div class="modal" id="editTodoModal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-dark">
+            <p class="modal-card-title has-text-light">
+                <i class="fas fa-edit"></i>&nbsp;Modify Task Parameters
+            </p>
+            <button class="delete" aria-label="close" onclick="closeEditModal()"></button>
+        </header>
+        <section class="modal-card-body has-background-dark">
+            <form id="editTodoForm">
+                <input type="hidden" id="editTodoId">
+                
+                <div class="field">
+                    <label class="label has-text-light">Task Title</label>
+                    <div class="control">
+                        <input class="input is-dark" type="text" id="editTodoTitle" required>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label has-text-light">Description</label>
+                    <div class="control">
+                        <textarea class="textarea is-dark" id="editTodoDescription" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label has-text-light">Priority Level</label>
+                    <div class="control">
+                        <div class="select is-dark is-fullwidth">
+                            <select id="editTodoPriority">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <footer class="modal-card-foot has-background-dark">
+            <button class="button is-success cyberpunk-button" onclick="saveEditTodo()">
+                <i class="fas fa-save"></i>&nbsp;Update Task
+            </button>
+            <button class="button" onclick="closeEditModal()">Cancel</button>
+        </footer>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}
