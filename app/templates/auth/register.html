@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Register - CyberTODO{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-5">
+                <div class="cyber-panel">
+                    <div class="has-text-centered mb-5">
+                        <h1 class="title is-3 has-text-cyan">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Create Identity
+                        </h1>
+                        <p class="subtitle is-6 has-text-grey">
+                            Register a new profile in the system database
+                        </p>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-user mr-2"></i>Username
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.username(class="input cyber-input") }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                            {% if form.username.errors %}
+                                {% for error in form.username.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-envelope mr-2"></i>Email
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.email(class="input cyber-input") }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                            </div>
+                            {% if form.email.errors %}
+                                {% for error in form.email.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-lock mr-2"></i>Password
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.password(class="input cyber-input") }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                            {% if form.password.errors %}
+                                {% for error in form.password.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-shield-alt mr-2"></i>Confirm Password
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.password2(class="input cyber-input") }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-shield-alt"></i>
+                                </span>
+                            </div>
+                            {% if form.password2.errors %}
+                                {% for error in form.password2.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <div class="control">
+                                {{ form.submit(class="button cyber-button-primary is-fullwidth") }}
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="has-text-centered mt-4">
+                        <p class="has-text-grey">
+                            Already in the system? 
+                            <a href="{{ url_for('auth.login') }}" class="has-text-cyan">
+                                Access existing profile
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

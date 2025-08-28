@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - CyberTODO{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-6">
+                <div class="cyber-panel">
+                    <div class="has-text-centered mb-5">
+                        <h1 class="title is-3 has-text-cyan">
+                            <i class="fas fa-{{ 'edit' if todo else 'plus' }} mr-2"></i>
+                            {{ title }}
+                        </h1>
+                        <p class="subtitle is-6 has-text-grey">
+                            {{ 'Update task details' if todo else 'Create a new task in your TODO list' }}
+                        </p>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-heading mr-2"></i>Title *
+                            </label>
+                            <div class="control">
+                                {{ form.title(class="input cyber-input") }}
+                            </div>
+                            {% if form.title.errors %}
+                                {% for error in form.title.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-align-left mr-2"></i>Description
+                            </label>
+                            <div class="control">
+                                {{ form.description(class="textarea cyber-input", rows="3") }}
+                            </div>
+                            {% if form.description.errors %}
+                                {% for error in form.description.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="columns">
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label has-text-light">
+                                        <i class="fas fa-flag mr-2"></i>Status
+                                    </label>
+                                    <div class="control">
+                                        <div class="select cyber-select is-fullwidth">
+                                            {{ form.status() }}
+                                        </div>
+                                    </div>
+                                    {% if form.status.errors %}
+                                        {% for error in form.status.errors %}
+                                            <p class="help is-danger">{{ error }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label has-text-light">
+                                        <i class="fas fa-exclamation-triangle mr-2"></i>Priority
+                                    </label>
+                                    <div class="control">
+                                        <div class="select cyber-select is-fullwidth">
+                                            {{ form.priority() }}
+                                        </div>
+                                    </div>
+                                    {% if form.priority.errors %}
+                                        {% for error in form.priority.errors %}
+                                            <p class="help is-danger">{{ error }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-calendar mr-2"></i>Due Date
+                            </label>
+                            <div class="control">
+                                {{ form.due_date(class="input cyber-input") }}
+                            </div>
+                            <p class="help has-text-grey">
+                                Format: YYYY-MM-DD HH:MM (e.g., 2077-12-31 23:59)
+                            </p>
+                            {% if form.due_date.errors %}
+                                {% for error in form.due_date.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field is-grouped">
+                            <div class="control">
+                                {{ form.submit(class="button cyber-button-primary") }}
+                            </div>
+                            <div class="control">
+                                <a href="{{ url_for('main.dashboard') }}" class="button cyber-button-secondary">
+                                    <span class="icon">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                    <span>Cancel</span>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
