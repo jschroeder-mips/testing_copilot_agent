@@ -10,14 +10,15 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv
-RUN pip install uv
+# Try to install uv, but fall back to pip if it fails (for environments with SSL issues)
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org uv || echo "uv installation failed, falling back to pip"
 
-# Copy uv project files for better dependency caching
-COPY pyproject.toml uv.lock ./
+# Copy both uv project files and requirements.txt for compatibility
+COPY pyproject.toml uv.lock requirements.txt ./
 
-# Install Python dependencies with uv
-RUN uv sync --frozen --no-dev
+# Install Python dependencies - try uv first, fall back to pip
+RUN uv sync --frozen --no-dev 2>/dev/null || \
+    (echo "uv failed, using pip fallback" && pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --no-cache-dir -r requirements.txt)
 
 # Copy application code
 COPY . .
@@ -25,8 +26,9 @@ COPY . .
 # Create database directory
 RUN mkdir -p /app/instance
 
-# Initialize database
-RUN uv run python run.py init-db
+# Initialize database - use proper Flask CLI commands
+ENV FLASK_APP=run.py
+RUN flask init-db
 
 # Expose port
 EXPOSE 5000
@@ -44,5 +46,5 @@ USER cybertodo
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:5000/ || exit 1
 
-# Run application
-CMD ["uv", "run", "python", "run.py"]
+# Run application - use uv run if available, otherwise python directly
+CMD ["sh", "-c", "(uv run python run.py 2>/dev/null) || python run.py"]

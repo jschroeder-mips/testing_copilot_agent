@@ -31,6 +31,8 @@ A cyberpunk-themed TODO application built with Flask, featuring a dark aesthetic
 - Python 3.8+
 - uv (recommended) or pip
 
+> **Note**: [uv](https://docs.astral.sh/uv/) is a fast Python package manager written in Rust. It provides significantly faster dependency resolution and installation compared to pip, making development more efficient.
+
 ### Installation
 
 #### Option 1: Using uv (recommended)
