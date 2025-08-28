@@ -10,6 +10,7 @@ A cyberpunk-themed TODO application built with Flask, featuring a dark aesthetic
 - 🎨 **Modern UI**: Clean interface with FontAwesome icons
 - 🔄 **CRUD Operations**: Create, read, update, and delete TODO items
 - 📊 **API Documentation**: Swagger-documented RESTful API
+- 🤖 **MCP Server**: Model Context Protocol server for LLM integration
 - 🏷️ **Priority Levels**: Critical, High, Medium, Low priority tasks
 - 📅 **Due Dates**: Set and track task deadlines
 - 🔍 **Filtering**: Filter tasks by status and priority
@@ -107,6 +108,44 @@ The REST API is fully documented with Swagger and available at:
 - `PUT /api/todos/{id}` - Update todo
 - `DELETE /api/todos/{id}` - Delete todo
 - `GET /api/users/profile` - Get user profile
+
+## MCP Server for LLM Integration
+
+CyberTODO includes a Model Context Protocol (MCP) server that enables LLMs to manage todos programmatically.
+
+### Starting the MCP Server
+
+```bash
+# Start the MCP server
+python mcp_server/run_server.py
+```
+
+### Available MCP Tools
+
+- **list_todos**: List todos with optional filtering
+- **create_todo**: Create new todo items
+- **get_todo**: Get specific todo by ID
+- **update_todo**: Update existing todos
+- **delete_todo**: Delete todos
+- **get_user_info**: Get user information
+
+### MCP Configuration Example
+
+```json
+{
+  "mcpServers": {
+    "cybertodo": {
+      "command": "python",
+      "args": ["/path/to/cybertodo/mcp_server/run_server.py"],
+      "env": {
+        "MCP_DEFAULT_API_KEY": "cyber-todo-2077-dev-key"
+      }
+    }
+  }
+}
+```
+
+For detailed MCP server documentation, see [`mcp_server/README.md`](mcp_server/README.md).
 
 ## Environment Variables
 
