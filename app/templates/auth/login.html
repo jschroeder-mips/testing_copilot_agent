@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Login - CyberTODO{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-4">
+                <div class="cyber-panel">
+                    <div class="has-text-centered mb-5">
+                        <h1 class="title is-3 has-text-cyan">
+                            <i class="fas fa-terminal mr-2"></i>
+                            System Access
+                        </h1>
+                        <p class="subtitle is-6 has-text-grey">
+                            Enter your credentials to access the mainframe
+                        </p>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-user mr-2"></i>Username
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.username(class="input cyber-input") }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                            {% if form.username.errors %}
+                                {% for error in form.username.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label has-text-light">
+                                <i class="fas fa-lock mr-2"></i>Password
+                            </label>
+                            <div class="control has-icons-left">
+                                {{ form.password(class="input cyber-input") }}
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                            {% if form.password.errors %}
+                                {% for error in form.password.errors %}
+                                    <p class="help is-danger">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="field">
+                            <div class="control">
+                                {{ form.submit(class="button cyber-button-primary is-fullwidth") }}
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="has-text-centered mt-4">
+                        <p class="has-text-grey">
+                            No account? 
+                            <a href="{{ url_for('auth.register') }}" class="has-text-cyan">
+                                Create new identity
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

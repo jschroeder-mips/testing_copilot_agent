@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero is-fullheight-with-navbar has-background-black">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="columns is-vcentered">
+                <div class="column is-6 is-offset-3">
+                    <div class="cyber-panel">
+                        <h1 class="title is-1 has-text-cyan">
+                            <i class="fas fa-terminal mr-3"></i>
+                            CyberTODO 2077
+                        </h1>
+                        <h2 class="subtitle is-4 has-text-light">
+                            Manage your tasks in the digital frontier
+                        </h2>
+                        
+                        <div class="content has-text-light">
+                            <p class="is-size-5">
+                                <i class="fas fa-microchip mr-2 has-text-cyan"></i>
+                                Neural-linked task management for the modern edge runner
+                            </p>
+                        </div>
+                        
+                        <div class="buttons is-centered mt-5">
+                            <a href="{{ url_for('auth.register') }}" class="button is-large cyber-button-primary">
+                                <span class="icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </span>
+                                <span>Jack In</span>
+                            </a>
+                            <a href="{{ url_for('auth.login') }}" class="button is-large cyber-button-secondary">
+                                <span class="icon">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </span>
+                                <span>Connect</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section has-background-black-ter">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-4">
+                <div class="cyber-panel">
+                    <div class="has-text-centered">
+                        <i class="fas fa-shield-alt is-size-1 has-text-cyan mb-3"></i>
+                        <h3 class="title is-4 has-text-light">Secure Authentication</h3>
+                        <p class="has-text-grey">
+                            Military-grade encryption protects your data from corporate intrusion
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-4">
+                <div class="cyber-panel">
+                    <div class="has-text-centered">
+                        <i class="fas fa-mobile-alt is-size-1 has-text-cyan mb-3"></i>
+                        <h3 class="title is-4 has-text-light">Mobile Interface</h3>
+                        <p class="has-text-grey">
+                            Access your tasks from any device, anywhere in Night City
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-4">
+                <div class="cyber-panel">
+                    <div class="has-text-centered">
+                        <i class="fas fa-code is-size-1 has-text-cyan mb-3"></i>
+                        <h3 class="title is-4 has-text-light">RESTful API</h3>
+                        <p class="has-text-grey">
+                            Full API access with Swagger documentation for developers
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

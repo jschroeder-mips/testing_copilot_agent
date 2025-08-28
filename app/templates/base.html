@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-black">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CyberTODO - 2077{% endblock %}</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Cyberpunk CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cyberpunk.css') }}">
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="has-background-black has-text-light">
+    <!-- Navigation -->
+    <nav class="navbar has-background-black-ter" role="navigation">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item has-text-cyan" href="{{ url_for('main.index') }}">
+                    <i class="fas fa-terminal mr-2"></i>
+                    <strong>CyberTODO 2077</strong>
+                </a>
+                <a role="button" class="navbar-burger has-text-cyan" id="navbar-burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+            </div>
+            
+            <div id="navbar-menu" class="navbar-menu">
+                <div class="navbar-end">
+                    {% if current_user.is_authenticated %}
+                        <a class="navbar-item has-text-light" href="{{ url_for('main.dashboard') }}">
+                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                        </a>
+                        <a class="navbar-item has-text-light" href="{{ url_for('main.new_todo') }}">
+                            <i class="fas fa-plus mr-2"></i>New TODO
+                        </a>
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link has-text-light">
+                                <i class="fas fa-user mr-2"></i>{{ current_user.username }}
+                            </a>
+                            <div class="navbar-dropdown has-background-black-ter">
+                                <a class="navbar-item has-text-light" href="/api/docs/">
+                                    <i class="fas fa-code mr-2"></i>API Docs
+                                </a>
+                                <hr class="navbar-divider">
+                                <a class="navbar-item has-text-danger" href="{{ url_for('auth.logout') }}">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a class="navbar-item has-text-light" href="{{ url_for('auth.login') }}">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a class="navbar-item has-text-light" href="{{ url_for('auth.register') }}">
+                            <i class="fas fa-user-plus mr-2"></i>Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="section py-3">
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="notification cyber-notification is-{{ 'danger' if category == 'danger' else 'info' if category == 'info' else 'success' }}">
+                            <button class="delete"></button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer has-background-black-ter has-text-light mt-6">
+        <div class="content has-text-centered">
+            <p>
+                <strong class="has-text-cyan">CyberTODO 2077</strong> 
+                - A cyberpunk-themed task management system.
+            </p>
+            <p class="is-size-7 has-text-grey">
+                <i class="fas fa-code"></i> Built with Flask, SQLAlchemy, and Bulma
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
