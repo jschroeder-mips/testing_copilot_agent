@@ -19,8 +19,40 @@ from wtforms.validators import (
     ValidationError,
     Optional as OptionalValidator
 )
+from wtforms.widgets import DateTimeLocalInput
 from app.models.user import User
 from app.models.todo import TodoStatus, TodoPriority
+
+
+class FlexibleDateTimeField(DateTimeField):
+    """DateTimeField that accepts multiple datetime formats."""
+    
+    def __init__(self, *args, **kwargs):
+        # Set default formats to try (in order)
+        self.formats = [
+            '%Y-%m-%dT%H:%M',  # ISO format from datetime-local input
+            '%Y-%m-%d %H:%M',  # Display format from template
+        ]
+        # Call parent with the primary format
+        super().__init__(*args, format='%Y-%m-%d %H:%M', **kwargs)
+    
+    def process_formdata(self, valuelist):
+        """Process form data by trying multiple datetime formats."""
+        if valuelist:
+            date_str = valuelist[0].strip()
+            if date_str:
+                # Try each format until one works
+                for fmt in self.formats:
+                    try:
+                        self.data = datetime.strptime(date_str, fmt)
+                        return
+                    except ValueError:
+                        continue
+                # If no format worked, let parent handle the error
+                self.data = None
+                raise ValueError(self.gettext('Not a valid datetime value.'))
+            else:
+                self.data = None
 
 
 class LoginForm(FlaskForm):
@@ -135,9 +167,8 @@ class TodoForm(FlaskForm):
         ],
         default=TodoPriority.MEDIUM.value
     )
-    due_date = DateTimeField(
+    due_date = FlexibleDateTimeField(
         'Due Date',
-        validators=[OptionalValidator()],
-        format='%Y-%m-%d %H:%M'
+        validators=[OptionalValidator()]
     )
     submit = SubmitField('Save TODO')
