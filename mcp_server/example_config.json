@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "cybertodo": {
+      "command": "python",
+      "args": ["/path/to/cybertodo/mcp_server/run_server.py"],
+      "env": {
+        "MCP_DEFAULT_API_KEY": "cyber-todo-2077-dev-key",
+        "DATABASE_URL": "sqlite:///todo_app.db"
+      }
+    }
+  }
+}
