@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cybertodo-2077"
+version = "1.0.0"
+description = "A cyberpunk-themed TODO application built with Flask"
+readme = "README.md"
+license = { text = "AGPL-3.0" }
+requires-python = ">=3.8"
+authors = [
+    { name = "CyberTODO Team" }
+]
+keywords = ["flask", "todo", "cyberpunk", "web-app"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Office/Business :: Scheduling",
+]
+dependencies = [
+    "Flask==3.0.0",
+    "Flask-SQLAlchemy==3.1.1",
+    "Flask-Login==0.6.3",
+    "Flask-WTF==1.2.1",
+    "Flask-RESTX==1.3.0",
+    "WTForms==3.1.1",
+    "Werkzeug==3.0.1",
+    "SQLAlchemy==2.0.23",
+    "python-dotenv==1.0.0",
+    "email-validator==2.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/jschroeder-mips/testing_copilot_agent"
+Repository = "https://github.com/jschroeder-mips/testing_copilot_agent"
+Issues = "https://github.com/jschroeder-mips/testing_copilot_agent/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.uv]
+dev-dependencies = []
