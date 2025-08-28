@@ -1,21 +1,21 @@
-# CyberTODO 2077
+# Calcifer's Tasks
 
-A cyberpunk-themed TODO application built with Flask, featuring a dark aesthetic inspired by futuristic dystopian themes.
+A magical Studio Ghibli-themed task management application built with Flask, featuring a warm aesthetic inspired by Calcifer from "Howl's Moving Castle".
 
 ## Features
 
-- ✨ **User Authentication**: Secure login and registration system
-- 📱 **Mobile-Ready**: Responsive design with Bulma CSS framework
-- 🌙 **Dark Theme**: Cyberpunk-inspired dark theme by default
-- 🎨 **Modern UI**: Clean interface with FontAwesome icons
-- 🔄 **CRUD Operations**: Create, read, update, and delete TODO items
-- 📊 **API Documentation**: Swagger-documented RESTful API
-- 🤖 **MCP Server**: Model Context Protocol server for LLM integration
-- 🏷️ **Priority Levels**: Critical, High, Medium, Low priority tasks
-- 📅 **Due Dates**: Set and track task deadlines
-- 🔍 **Filtering**: Filter tasks by status and priority
-- 💾 **SQLite Database**: Lightweight database storage
-- 🔒 **Type Safety**: Full Python type hints for better code quality
+- ✨ **User Authentication**: Secure magical identity system for castle residents
+- 📱 **Mobile-Ready**: Responsive design perfect for wandering with the castle
+- 🔥 **Fire Theme**: Warm Ghibli-inspired theme powered by Calcifer's flames
+- 🎨 **Whimsical UI**: Enchanting interface with magical icons
+- 🔄 **CRUD Operations**: Create, read, update, and delete magical tasks
+- 📊 **API Documentation**: Swagger-documented RESTful API for wizards
+- 🤖 **MCP Server**: Model Context Protocol server for magical LLM integration
+- 🏷️ **Priority Levels**: Critical, High, Medium, Low priority for castle duties
+- 📅 **Due Dates**: Set and track magical task deadlines
+- 🔍 **Filtering**: Filter tasks by status and priority like Calcifer sorting his flames
+- 💾 **SQLite Database**: Lightweight magical database storage
+- 🔒 **Type Safety**: Full Python type hints for magical code quality
 
 ## Technology Stack
 
@@ -111,7 +111,7 @@ The REST API is fully documented with Swagger and available at:
 
 ## MCP Server for LLM Integration
 
-CyberTODO includes a Model Context Protocol (MCP) server that enables LLMs to manage todos programmatically.
+Calcifer's Tasks includes a Model Context Protocol (MCP) server that enables LLMs to manage magical tasks programmatically.
 
 ### Starting the MCP Server
 
@@ -519,14 +519,14 @@ The application is fully responsive and optimized for mobile devices:
 - Mobile-optimized forms
 - Gesture support
 
-## Cyberpunk Theme
+## Studio Ghibli Theme
 
-The UI features a distinctive cyberpunk aesthetic:
-- Neon cyan (#00ffff) and magenta (#ff00ff) accents
-- Dark background gradients
-- Glowing effects and animations
-- Monospace typography
-- Futuristic UI elements
+The UI features a warm, whimsical Studio Ghibli aesthetic inspired by Calcifer:
+- Warm orange (#ff6b35) and fire red (#ff4500) accents
+- Cozy brown background gradients
+- Gentle glow effects and magical animations
+- Friendly serif typography (Georgia)
+- Organic, magical UI elements
 
 ## Contributing
 
@@ -545,4 +545,4 @@ This project is licensed under the GNU Affero General Public License v3.0 - see 
 - Bulma CSS framework for responsive design
 - FontAwesome for iconography
 - Flask ecosystem for robust web development
-- Cyberpunk 2077 for aesthetic inspiration
+- Studio Ghibli and Howl's Moving Castle for aesthetic inspiration
