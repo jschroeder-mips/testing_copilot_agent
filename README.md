@@ -29,9 +29,39 @@ A cyberpunk-themed TODO application built with Flask, featuring a dark aesthetic
 ### Prerequisites
 
 - Python 3.8+
-- pip
+- uv (recommended) or pip
 
 ### Installation
+
+#### Option 1: Using uv (recommended)
+
+1. Install uv:
+```bash
+pip install uv
+```
+
+2. Clone the repository:
+```bash
+git clone https://github.com/jschroeder-mips/testing_copilot_agent.git
+cd testing_copilot_agent
+```
+
+3. Create and activate virtual environment with dependencies:
+```bash
+uv sync
+```
+
+4. Initialize the database:
+```bash
+uv run python run.py init-db
+```
+
+5. Run the application:
+```bash
+uv run python run.py
+```
+
+#### Option 2: Using pip
 
 1. Clone the repository:
 ```bash
@@ -140,20 +170,21 @@ flask shell
 
 ## Docker Deployment
 
-The application is designed to be Docker-ready:
+The application is designed to be Docker-ready and uses uv for fast, reliable dependency management:
 
 ```dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install uv
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev
 
 COPY . .
-RUN python run.py init-db
+RUN uv run python run.py init-db
 
 EXPOSE 5000
-CMD ["python", "run.py"]
+CMD ["uv", "run", "python", "run.py"]
 ```
 
 ## Security Features

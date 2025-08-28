@@ -7,13 +7,17 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Install uv
+RUN pip install uv
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy uv project files for better dependency caching
+COPY pyproject.toml uv.lock ./
+
+# Install Python dependencies with uv
+RUN uv sync --frozen --no-dev
 
 # Copy application code
 COPY . .
@@ -22,7 +26,7 @@ COPY . .
 RUN mkdir -p /app/instance
 
 # Initialize database
-RUN python run.py init-db
+RUN uv run python run.py init-db
 
 # Expose port
 EXPOSE 5000
@@ -41,4 +45,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:5000/ || exit 1
 
 # Run application
-CMD ["python", "run.py"]
+CMD ["uv", "run", "python", "run.py"]
