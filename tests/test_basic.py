@@ -36,7 +36,7 @@ class CyberTODOTestCase(unittest.TestCase):
         """Test home page loads."""
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'CyberTODO 2077', response.data)
+        self.assertIn(b'Calcifer\'s Tasks', response.data)
     
     def test_user_model(self):
         """Test User model functionality."""

@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CyberTODO - 2077{% endblock %}</title>
+    <title>{% block title %}Calcifer's Tasks - Moving Castle{% endblock %}</title>
     
     <!-- Bulma CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom Cyberpunk CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cyberpunk.css') }}">
+    <!-- Custom Ghibli CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ghibli.css') }}">
     
     {% block head %}{% endblock %}
 </head>
@@ -20,8 +20,8 @@
         <div class="container">
             <div class="navbar-brand">
                 <a class="navbar-item has-text-cyan" href="{{ url_for('main.index') }}">
-                    <i class="fas fa-terminal mr-2"></i>
-                    <strong>CyberTODO 2077</strong>
+                    <i class="fas fa-fire mr-2"></i>
+                    <strong>Calcifer's Tasks</strong>
                 </a>
                 <a role="button" class="navbar-burger has-text-cyan" id="navbar-burger">
                     <span></span>
@@ -37,7 +37,7 @@
                             <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
                         </a>
                         <a class="navbar-item has-text-light" href="{{ url_for('main.new_todo') }}">
-                            <i class="fas fa-plus mr-2"></i>New TODO
+                            <i class="fas fa-plus mr-2"></i>New Task
                         </a>
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link has-text-light">
@@ -91,8 +91,8 @@
     <footer class="footer has-background-black-ter has-text-light mt-6">
         <div class="content has-text-centered">
             <p>
-                <strong class="has-text-cyan">CyberTODO 2077</strong> 
-                - A cyberpunk-themed task management system.
+                <strong class="has-text-cyan">Calcifer's Tasks</strong> 
+                - A magical task management system for Howl's Moving Castle.
             </p>
             <p class="is-size-7 has-text-grey">
                 <i class="fas fa-code"></i> Built with Flask, SQLAlchemy, and Bulma
