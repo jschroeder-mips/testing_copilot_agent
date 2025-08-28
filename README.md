@@ -209,23 +209,298 @@ Access Flask shell with models:
 flask shell
 ```
 
-## Docker Deployment
+## Docker Installation & Deployment
 
-The application is designed to be Docker-ready and uses uv for fast, reliable dependency management:
+CyberTODO 2077 provides comprehensive Docker support for easy deployment and development. The application includes a production-ready Dockerfile and Docker Compose configuration.
 
-```dockerfile
-FROM python:3.11-slim
+### Prerequisites
 
-WORKDIR /app
-RUN pip install uv
-COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev
+- Docker Engine 20.10+ ([Install Docker](https://docs.docker.com/get-docker/))
+- Docker Compose v2.0+ (included with Docker Desktop)
 
-COPY . .
-RUN uv run python run.py init-db
+### Quick Start with Docker Compose (Recommended)
 
-EXPOSE 5000
-CMD ["uv", "run", "python", "run.py"]
+The easiest way to run CyberTODO is using Docker Compose:
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/jschroeder-mips/testing_copilot_agent.git
+cd testing_copilot_agent
+```
+
+2. **Start the application:**
+```bash
+docker compose up -d
+```
+
+3. **Access the application:**
+   - Open your browser and navigate to `http://localhost:5000`
+   - The application will be ready to use with a fresh database
+
+4. **Stop the application:**
+```bash
+docker compose down
+```
+
+### Manual Docker Commands
+
+If you prefer to use Docker directly without Compose:
+
+#### Building the Image
+
+```bash
+# Build the Docker image
+docker build -t cybertodo:latest .
+```
+
+#### Running the Container
+
+```bash
+# Run with default settings
+docker run -d \
+  --name cybertodo \
+  -p 5000:5000 \
+  cybertodo:latest
+
+# Run with custom configuration
+docker run -d \
+  --name cybertodo \
+  -p 5000:5000 \
+  -e FLASK_CONFIG=production \
+  -e SECRET_KEY=your-secret-key-here \
+  -v cybertodo_data:/app/instance \
+  cybertodo:latest
+```
+
+### Environment Variables
+
+Configure the application using these environment variables:
+
+| Variable | Description | Default | Examples |
+|----------|-------------|---------|----------|
+| `FLASK_CONFIG` | Application configuration mode | `production` | `development`, `production`, `testing` |
+| `SECRET_KEY` | Flask secret key for sessions | Auto-generated | `your-secure-secret-key` |
+| `DATABASE_URL` | Database connection string | `sqlite:///todo_app.db` | `postgresql://user:pass@host:port/db` |
+
+### Data Persistence
+
+#### Using Docker Volumes (Recommended)
+
+```bash
+# Create a named volume for data persistence
+docker volume create cybertodo_data
+
+# Run with volume mounted
+docker run -d \
+  --name cybertodo \
+  -p 5000:5000 \
+  -v cybertodo_data:/app/instance \
+  cybertodo:latest
+```
+
+#### Using Bind Mounts
+
+```bash
+# Create local instance directory
+mkdir -p ./instance
+
+# Run with bind mount
+docker run -d \
+  --name cybertodo \
+  -p 5000:5000 \
+  -v $(pwd)/instance:/app/instance \
+  cybertodo:latest
+```
+
+### Production Deployment
+
+For production environments, consider these configurations:
+
+#### Docker Compose with Custom Settings
+
+Create a `docker-compose.prod.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  cybertodo:
+    build: .
+    ports:
+      - "80:5000"
+    environment:
+      - FLASK_CONFIG=production
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      - cybertodo_data:/app/instance
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  cybertodo_data:
+```
+
+Run with:
+```bash
+# Set environment variables
+export SECRET_KEY="your-production-secret-key"
+export DATABASE_URL="your-database-url"
+
+# Deploy
+docker compose -f docker-compose.prod.yml up -d
+```
+
+#### With PostgreSQL Database
+
+For production with PostgreSQL, update your `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  cybertodo:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_CONFIG=production
+      - SECRET_KEY=your-secret-key-here
+      - DATABASE_URL=postgresql://cybertodo:changeme@postgres:5432/cybertodo
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cybertodo
+      POSTGRES_USER: cybertodo
+      POSTGRES_PASSWORD: changeme
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+### Development with Docker
+
+For development with live code reloading:
+
+```bash
+# Run in development mode with bind mounts
+docker run -it \
+  --name cybertodo-dev \
+  -p 5000:5000 \
+  -v $(pwd):/app \
+  -e FLASK_CONFIG=development \
+  cybertodo:latest
+```
+
+Or create a `docker-compose.dev.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  cybertodo:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_CONFIG=development
+    volumes:
+      - .:/app
+      - /app/instance
+    command: ["python", "run.py"]
+```
+
+### Container Features
+
+The Docker image includes:
+
+- **Multi-stage build**: Optimized for production with minimal attack surface
+- **Non-root user**: Runs as `cybertodo` user for security
+- **Health checks**: Built-in health monitoring
+- **Dependency management**: Uses uv for fast package installation with pip fallback
+- **Signal handling**: Proper shutdown handling
+- **Environment flexibility**: Works with SQLite (default) or PostgreSQL
+
+### Troubleshooting
+
+#### Common Issues and Solutions
+
+**1. Container exits immediately:**
+```bash
+# Check logs
+docker logs cybertodo
+
+# Common fix: ensure proper permissions
+docker run --user $(id -u):$(id -g) ...
+```
+
+**2. Database permission errors:**
+```bash
+# Fix: Use named volumes instead of bind mounts
+docker volume create cybertodo_data
+docker run -v cybertodo_data:/app/instance ...
+```
+
+**3. Port already in use:**
+```bash
+# Check what's using the port
+sudo netstat -tlnp | grep :5000
+
+# Use different port
+docker run -p 8080:5000 cybertodo:latest
+```
+
+**4. Build fails with network issues:**
+```bash
+# Build with network host mode
+docker build --network=host -t cybertodo:latest .
+```
+
+**5. Container can't connect to database:**
+```bash
+# Check container logs
+docker logs cybertodo
+
+# Verify environment variables
+docker inspect cybertodo | grep -A 10 Env
+```
+
+### Performance Tuning
+
+For high-traffic production deployments:
+
+```bash
+# Run multiple instances behind a load balancer
+docker run -d --name cybertodo-1 -p 5001:5000 cybertodo:latest
+docker run -d --name cybertodo-2 -p 5002:5000 cybertodo:latest
+docker run -d --name cybertodo-3 -p 5003:5000 cybertodo:latest
+```
+
+### Monitoring
+
+Set up monitoring with Docker:
+
+```bash
+# View real-time logs
+docker logs -f cybertodo
+
+# Monitor resource usage
+docker stats cybertodo
+
+# Health check status
+docker inspect cybertodo | grep -A 5 Health
 ```
 
 ## Security Features

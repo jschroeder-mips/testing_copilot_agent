@@ -9,7 +9,7 @@ services:
       - FLASK_CONFIG=production
       - SECRET_KEY=your-secret-key-here-change-in-production
     volumes:
-      - ./instance:/app/instance
+      - cybertodo_data:/app/instance
     restart: unless-stopped
     
   # Optional: Add PostgreSQL for production
@@ -23,5 +23,5 @@ services:
   #     - postgres_data:/var/lib/postgresql/data
   #   restart: unless-stopped
 
-# volumes:
-#   postgres_data:
+volumes:
+  cybertodo_data:
