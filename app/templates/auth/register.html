@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Register - CyberTODO{% endblock %}
+{% block title %}Register - Calcifer's Tasks{% endblock %}
 
 {% block content %}
 <section class="section">
@@ -10,11 +10,11 @@
                 <div class="cyber-panel">
                     <div class="has-text-centered mb-5">
                         <h1 class="title is-3 has-text-cyan">
-                            <i class="fas fa-user-plus mr-2"></i>
-                            Create Identity
+                            <i class="fas fa-scroll mr-2"></i>
+                            Join Castle Residents
                         </h1>
                         <p class="subtitle is-6 has-text-grey">
-                            Register a new profile in the system database
+                            Register to become a new resident of Howl's Moving Castle
                         </p>
                     </div>
                     
@@ -98,9 +98,9 @@
                     
                     <div class="has-text-centered mt-4">
                         <p class="has-text-grey">
-                            Already in the system? 
+                            Already a castle resident? 
                             <a href="{{ url_for('auth.login') }}" class="has-text-cyan">
-                                Access existing profile
+                                Return to Castle
                             </a>
                         </p>
                     </div>
